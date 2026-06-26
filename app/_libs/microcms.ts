@@ -12,21 +12,11 @@ export type Member = {
   image: MicroCMSImage;
 } & MicroCMSListContent;
 
-export type News = {
-  id: string;
-  title: string;
-  category: {
-    name: string;
-  };
-  publishedAt: string;
-  createdAt: string;
-};
-
-if(!process.env.MICROCMS_SERVICE_DOMAIN) {
+if (!process.env.MICROCMS_SERVICE_DOMAIN) {
   throw new Error("MICROCMS_SERVICE_DOMAIN is required");
 }
 
-if(!process.env.MICROCMS_API_KEY) {
+if (!process.env.MICROCMS_API_KEY) {
   throw new Error("MICROCMS_API_KEY is required");
 }
 
@@ -35,15 +25,30 @@ const client = createClient({
   apiKey: process.env.MICROCMS_API_KEY,
 });
 
+export type Category = {
+  name: string;
+} & MicroCMSListContent;
+
+export type News = {
+  title: string;
+  description: string;
+  content: string;
+  thumbnail?: MicroCMSImage;
+  category: Category;
+} & MicroCMSListContent;
+
 export const getMembersList = async (queries?: MicroCMSQueries) => {
-  const listData = await client
-  .getList<Member>({
+  const listData = await client.getList<Member>({
     endpoint: "members",
     queries,
   });
   return listData;
 };
 
-export type Category = {
-  name: string;
-}
+export const getNewsList = async (queries?: MicroCMSQueries) => {
+  const listData = await client.getList<News>({
+    endpoint: "news",
+    queries,
+  });
+  return listData;
+};
